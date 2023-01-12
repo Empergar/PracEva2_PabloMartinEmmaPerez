@@ -3,7 +3,9 @@ CREATE TABLE libros
     isbn VARCHAR(12),
     titulo VARCHAR(100),
     estado VARCHAR(7),
-    CONSTRAINT "PK_LIBROS"         PRIMARY KEY (isbn)
+    CONSTRAINT "PK_LIBROS"          PRIMARY KEY (isbn),
+    CONSTRAINT "CH_LIBROS_ESTADO"   CHECK ( estado IN ('LIBRE', 'OCUPADO') ),
+    CONSTRAINT "NN_LIBROS_ESTADO"   CHECK ( estado IS NOT NULL)
 );
 
 CREATE TABLE socios
@@ -14,7 +16,7 @@ CREATE TABLE socios
     dni VARCHAR(12),
     nprestamos INTEGER,
     CONSTRAINT "PK_SOCIOS"         PRIMARY KEY (dni),
-    CONSTRAINT "NUM_NPRESTAMOS"    CHECK ( nprestamos <= 5 )
+    CONSTRAINT "CH_NPRESTAMOS"    CHECK ( nprestamos <= 5 )
 );
 
 CREATE TABLE prestamos
