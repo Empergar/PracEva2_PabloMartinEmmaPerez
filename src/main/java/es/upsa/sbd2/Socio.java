@@ -11,9 +11,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Socio
 {
+    private String dni;
     private String nombre;
     private String email;
     private String direccion;
-    private String dni;
     private int nprestamos;
+
+    public void incrementarNprestamos()
+    {
+        if (nprestamos < 0) {
+            nprestamos++;
+        }
+    }
 }
+
+
