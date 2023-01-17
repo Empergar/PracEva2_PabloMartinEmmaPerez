@@ -4,6 +4,7 @@ import es.upsa.sbd2.Exceptions.*;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public class PostgresDao implements Dao
 {
@@ -175,6 +176,38 @@ public class PostgresDao implements Dao
     }
 
     @Override
+    public Prestamo getPrestamoByIsbn(String isbn) throws SQLException, PrestamoNotFoundException
+    {
+        final String SQL =  "SELECT p.isbn, p.dni, p.fecha_prestamo, p.fecha_devolucion"
+                         +  "   FROM prestamos p "
+                         +  "   WHERE p.isbn = ? ";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL))
+        {
+            preparedStatement.setString(1, isbn);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery() )
+            {
+                if (resultSet.next())
+                {
+                    return Prestamo.builder()
+                            .withIsbn(resultSet.getString(1))
+                            .withDni(resultSet.getString(2))
+                            .withFechaPrestamo(resultSet.getTimestamp(3).toLocalDateTime())
+                            .withFechaDevolucion(resultSet.getTimestamp(4).toLocalDateTime()) //ERROR
+                            .build();
+                }
+                else
+                {
+                    throw  new PrestamoNotFoundException();
+                }
+            }
+        }
+
+    }
+
+
+    @Override
     public void updateLibro(Libro libro) throws SQLException, LibroNotFoundException, EstadoNotValidException, RequiredTituloException, RequiredEstadoException {
         final String SQL = "UPDATE libros "
                          + "    SET  titulo = ?, estado = ? "
@@ -230,6 +263,30 @@ public class PostgresDao implements Dao
         }
     }
 
+    public void updatePrestamo(Prestamo prestamo) throws SQLException, PrestamoNotFoundException, LibroNotFoundException, SocioNotFoundException
+    {
+        final String SQL = "UPDATE prestamos "
+                         + "    SET  isbn = ?, dni = ?, fecha_prestamo = ?, fecha_devolucion = ? "
+                         + "    WHERE isbn = ? ";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL))
+        {
+            preparedStatement.setString(1, prestamo.getIsbn());
+            preparedStatement.setString(2, prestamo.getDni());
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(prestamo.getFechaPrestamo()));
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(prestamo.getFechaDevolucion()));
+
+
+            int count = preparedStatement.executeUpdate();
+            if (count == 0) throw new PrestamoNotFoundException();
+        } catch (SQLException sqlException)
+        {
+            String message = sqlException.getMessage();
+            if (message.contains("FK_PRESTAMOS_LIBROS")) throw new LibroNotFoundException();
+            if (message.contains("FK_PRESTAMOS_SOCIOS")) throw new SocioNotFoundException();
+
+            throw sqlException;
+        }
+    }
     @Override
     public void prestarLibro(String dni, String isbn) throws LibroNotFoundException, SQLException,
             SocioNotFoundException, RequiredTituloException, RequiredEstadoException, EstadoNotValidException,
@@ -261,6 +318,40 @@ public class PostgresDao implements Dao
             throw new EstadoNotValidException();
         }
     }
+
+    @Override
+    public void devolverLibro(String isbn) throws SQLException, LibroNotFoundException, SocioNotFoundException, PrestamoNotFoundException, RequiredTituloException, RequiredEstadoException, EstadoNotValidException, NprestamosNotValidException, RequiredDireccionException, RequiredEmailException, RequiredNprestamosException, RequiredNombreException {
+
+        Libro librodevuelto = getLibroByIsbn(isbn);
+        Prestamo prestamo = getPrestamoByIsbn(isbn); //Casca aqui
+
+        //Compruebo que este ocupado
+        if (librodevuelto.getEstado().equals(Estado.OCUPADO)) {
+
+            //Para hacer pruebas
+            if(prestamo.getFechaDevolucion()==null) {
+
+                prestamo.cambiarFechaDevolucion();
+                librodevuelto.cambiarEstado();
+
+                Socio socio = getSocioByDni(prestamo.getDni());
+                if (socio.getNprestamos() > 0 && socio.getNprestamos() <= 5) {
+
+                    socio.decrementarNprestamos();
+
+                    updatePrestamo(prestamo);
+                    updateLibro(librodevuelto);
+                    updateSocio(socio);
+                }else {
+                    throw new NprestamosNotValidException();
+                }
+            }
+
+        }else{
+            throw new EstadoNotValidException();
+        }
+    }
+
 
     @Override
     public void close() throws Exception

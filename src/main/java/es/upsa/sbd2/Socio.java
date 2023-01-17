@@ -19,8 +19,14 @@ public class Socio
 
     public void incrementarNprestamos()
     {
-        if (nprestamos < 0) {
+        if (nprestamos >= 0) {
             nprestamos++;
+        }
+    }
+    public void decrementarNprestamos()
+    {
+        if (nprestamos > 0) {
+            nprestamos--;
         }
     }
 }

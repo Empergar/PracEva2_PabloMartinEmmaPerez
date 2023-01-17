@@ -17,4 +17,9 @@ public class Prestamo
     private String dni;
     private LocalDateTime fechaPrestamo;
     private LocalDateTime fechaDevolucion;
+
+    public void cambiarFechaDevolucion (){
+
+        fechaDevolucion= LocalDateTime.now();
+    }
 }

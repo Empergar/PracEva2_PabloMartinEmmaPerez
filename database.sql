@@ -41,6 +41,7 @@ UPDATE socios
     SET  nprestamos = 5, nombre = ''
     WHERE dni = '70944875H';
 
+
 DELETE FROM socios
 WHERE dni = '70944875H';
 
