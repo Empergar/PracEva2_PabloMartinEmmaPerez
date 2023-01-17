@@ -178,7 +178,7 @@ public class PostgresDao implements Dao
     @Override
     public Prestamo getPrestamoByIsbn(String isbn) throws SQLException, PrestamoNotFoundException
     {
-        final String SQL =  "SELECT p.isbn, p.dni, p.fecha_prestamo, p.fecha_devolucion"
+        final String SQL =  "SELECT p.isbn, p.dni, p.fecha_prestamo, p.fecha_devolucion "
                          +  "   FROM prestamos p "
                          +  "   WHERE p.isbn = ? ";
 
@@ -190,11 +190,13 @@ public class PostgresDao implements Dao
             {
                 if (resultSet.next())
                 {
+                    LocalDateTime fechaDevolucionBuilder = obtenerFechaDevolucionNullable(resultSet.getTimestamp(4));
+
                     return Prestamo.builder()
                             .withIsbn(resultSet.getString(1))
                             .withDni(resultSet.getString(2))
                             .withFechaPrestamo(resultSet.getTimestamp(3).toLocalDateTime())
-                            .withFechaDevolucion(resultSet.getTimestamp(4).toLocalDateTime()) //ERROR
+                            .withFechaDevolucion(fechaDevolucionBuilder) //ERROR
                             .build();
                 }
                 else
@@ -357,5 +359,18 @@ public class PostgresDao implements Dao
     public void close() throws Exception
     {
         this.connection.close();
+    }
+
+    LocalDateTime obtenerFechaDevolucionNullable(Timestamp fechaDevolucion)
+    {
+        LocalDateTime fechaDevolucionNullable;
+        if (fechaDevolucion != null)
+        {
+            fechaDevolucionNullable = fechaDevolucion.toLocalDateTime();
+        } else
+        {
+            fechaDevolucionNullable = null;
+        }
+        return  fechaDevolucionNullable;
     }
 }
