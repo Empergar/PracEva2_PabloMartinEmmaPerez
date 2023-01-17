@@ -47,9 +47,37 @@ public class PostgresDao implements Dao
     }
 
     @Override
-    public Socio insertSocio(String dni, String nombre, String direccion, String email)
+    public Socio insertSocio(String dni, String nombre, String direccion, String email) throws SQLException, SocioDuplicatedException, RequiredNombreException, RequiredDireccionException, RequiredEmailException
     {
-        return null;
+        final String SQL = "INSERT INTO socios(dni, nombre, direccion, email, nprestamos)"
+                         + "            VALUES( ? ,    ?,       ?,       ?  ,     ?     )";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+            preparedStatement.setString(1, dni);
+            preparedStatement.setString(2, nombre);
+            preparedStatement.setString(3, direccion);
+            preparedStatement.setString(4, email);
+            preparedStatement.setInt(5, 0);
+
+            preparedStatement.executeUpdate();
+
+            return Socio.builder()
+                    .withDni(dni)
+                    .withNombre(nombre)
+                    .withDireccion(direccion)
+                    .withEmail(email)
+                    .withNprestamos(0)
+                    .build();
+
+        } catch (SQLException sqlException)
+        {
+            String message = sqlException.getMessage();
+            if (message.contains("PK_SOCIOS")) throw new SocioDuplicatedException();
+            if (message.contains("NN_SOCIOS_NOMBRE")) throw new RequiredNombreException();
+            if (message.contains("NN_SOCIOS_DIRECCION")) throw new RequiredDireccionException();
+            if (message.contains("NN_SOCIOS_EMAIl")) throw new RequiredEmailException();
+            throw sqlException;
+        }
     }
 
     @Override

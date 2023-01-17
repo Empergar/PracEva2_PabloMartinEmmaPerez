@@ -9,7 +9,7 @@ public interface Dao extends AutoCloseable
 {
     Libro insertLibro(String isbn, String titulo) throws SQLException, LibroDuplicatedException, EstadoNotValidException, RequiredTituloException, RequiredEstadoException;
 
-    Socio insertSocio(String dni, String nombre, String direccion, String email);
+    Socio insertSocio(String dni, String nombre, String direccion, String email) throws RequiredNombreException, RequiredDireccionException, RequiredEmailException, SocioDuplicatedException, SQLException;
 
     Prestamo insertPrestamo(String isbn, String dni) throws LibroPrestamoDuplicatedException, LibroNotFoundException, SocioNotFoundException, RequiredFechaPrestamoException, SQLException;
 
