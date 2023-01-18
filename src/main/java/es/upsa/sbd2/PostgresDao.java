@@ -190,13 +190,14 @@ public class PostgresDao implements Dao
             {
                 if (resultSet.next())
                 {
-                    LocalDateTime fechaDevolucionBuilder = obtenerFechaDevolucionNullable(resultSet.getTimestamp(4));
+                    Timestamp fechaDevolucion = resultSet.getTimestamp(4);
+                    LocalDateTime fechaDevolucionNullable = (fechaDevolucion != null) ? fechaDevolucion.toLocalDateTime() : null;
 
                     return Prestamo.builder()
                             .withIsbn(resultSet.getString(1))
                             .withDni(resultSet.getString(2))
                             .withFechaPrestamo(resultSet.getTimestamp(3).toLocalDateTime())
-                            .withFechaDevolucion(fechaDevolucionBuilder) //ERROR
+                            .withFechaDevolucion(fechaDevolucionNullable) //ERROR
                             .build();
                 }
                 else
@@ -205,9 +206,7 @@ public class PostgresDao implements Dao
                 }
             }
         }
-
     }
-
 
     @Override
     public void updateLibro(Libro libro) throws SQLException, LibroNotFoundException, EstadoNotValidException, RequiredTituloException, RequiredEstadoException {
@@ -359,18 +358,5 @@ public class PostgresDao implements Dao
     public void close() throws Exception
     {
         this.connection.close();
-    }
-
-    LocalDateTime obtenerFechaDevolucionNullable(Timestamp fechaDevolucion)
-    {
-        LocalDateTime fechaDevolucionNullable;
-        if (fechaDevolucion != null)
-        {
-            fechaDevolucionNullable = fechaDevolucion.toLocalDateTime();
-        } else
-        {
-            fechaDevolucionNullable = null;
-        }
-        return  fechaDevolucionNullable;
     }
 }
