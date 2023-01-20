@@ -4,6 +4,8 @@ import es.upsa.sbd2.Exceptions.*;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class PostgresDao implements Dao
@@ -176,8 +178,9 @@ public class PostgresDao implements Dao
     }
 
     @Override
-    public Prestamo getPrestamoByIsbn(String isbn) throws SQLException, PrestamoNotFoundException
+    public List<Prestamo> getPrestamosByIsbn(String isbn) throws SQLException, PrestamoNotFoundException
     {
+        List<Prestamo> prestamos = new ArrayList<>();
         final String SQL =  "SELECT p.isbn, p.dni, p.fecha_prestamo, p.fecha_devolucion "
                          +  "   FROM prestamos p "
                          +  "   WHERE p.isbn = ? ";
@@ -190,15 +193,18 @@ public class PostgresDao implements Dao
             {
                 if (resultSet.next())
                 {
-                    Timestamp fechaDevolucion = resultSet.getTimestamp(4);
-                    LocalDateTime fechaDevolucionNullable = (fechaDevolucion != null) ? fechaDevolucion.toLocalDateTime() : null;
+                    do {
+                        Timestamp fechaDevolucion = resultSet.getTimestamp(4);
+                        LocalDateTime fechaDevolucionNullable = (fechaDevolucion != null) ? fechaDevolucion.toLocalDateTime() : null;
 
-                    return Prestamo.builder()
-                            .withIsbn(resultSet.getString(1))
-                            .withDni(resultSet.getString(2))
-                            .withFechaPrestamo(resultSet.getTimestamp(3).toLocalDateTime())
-                            .withFechaDevolucion(fechaDevolucionNullable) //ERROR
-                            .build();
+                        prestamos.add(Prestamo.builder()
+                                .withIsbn(resultSet.getString(1))
+                                .withDni(resultSet.getString(2))
+                                .withFechaPrestamo(resultSet.getTimestamp(3).toLocalDateTime())
+                                .withFechaDevolucion(fechaDevolucionNullable) //ERROR
+                                .build());
+                    } while (resultSet.next());
+                    return prestamos;
                 }
                 else
                 {
@@ -267,14 +273,14 @@ public class PostgresDao implements Dao
     public void updatePrestamo(Prestamo prestamo) throws SQLException, PrestamoNotFoundException, LibroNotFoundException, SocioNotFoundException
     {
         final String SQL = "UPDATE prestamos "
-                         + "    SET  isbn = ?, dni = ?, fecha_prestamo = ?, fecha_devolucion = ? "
+                         + "    SET dni = ?, fecha_prestamo = ?, fecha_devolucion = ? "
                          + "    WHERE isbn = ? ";
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL))
         {
-            preparedStatement.setString(1, prestamo.getIsbn());
-            preparedStatement.setString(2, prestamo.getDni());
-            preparedStatement.setTimestamp(3, Timestamp.valueOf(prestamo.getFechaPrestamo()));
-            preparedStatement.setTimestamp(4, Timestamp.valueOf(prestamo.getFechaDevolucion()));
+            preparedStatement.setString(1, prestamo.getDni());
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(prestamo.getFechaPrestamo()));
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(prestamo.getFechaDevolucion()));
+            preparedStatement.setString(4, prestamo.getIsbn());
 
 
             int count = preparedStatement.executeUpdate();
@@ -324,33 +330,42 @@ public class PostgresDao implements Dao
     public void devolverLibro(String isbn) throws SQLException, LibroNotFoundException, SocioNotFoundException, PrestamoNotFoundException, RequiredTituloException, RequiredEstadoException, EstadoNotValidException, NprestamosNotValidException, RequiredDireccionException, RequiredEmailException, RequiredNprestamosException, RequiredNombreException {
 
         Libro librodevuelto = getLibroByIsbn(isbn);
-        Prestamo prestamo = getPrestamoByIsbn(isbn); //Casca aqui
+        List<Prestamo> prestamosByIsbn = getPrestamosByIsbn(isbn);
 
-        //Compruebo que este ocupado
+        //Compruebo que el libro no se haya devuelto y por lo tanto haya un prestamo que se pueda devolver
         if (librodevuelto.getEstado().equals(Estado.OCUPADO)) {
+            for (Prestamo prestamo : prestamosByIsbn) {
+                //Para hacer pruebas
+                if (prestamo.getFechaDevolucion() == null) {
 
-            //Para hacer pruebas
-            if(prestamo.getFechaDevolucion()==null) {
+                    prestamo.cambiarFechaDevolucion();
+                    librodevuelto.cambiarEstado();
 
-                prestamo.cambiarFechaDevolucion();
-                librodevuelto.cambiarEstado();
+                    Socio socio = getSocioByDni(prestamo.getDni());
+                    if (socio.getNprestamos() > 0) {
 
-                Socio socio = getSocioByDni(prestamo.getDni());
-                if (socio.getNprestamos() > 0 && socio.getNprestamos() <= 5) {
+                        socio.decrementarNprestamos();
 
-                    socio.decrementarNprestamos();
-
-                    updatePrestamo(prestamo);
-                    updateLibro(librodevuelto);
-                    updateSocio(socio);
-                }else {
-                    throw new NprestamosNotValidException();
+                        updatePrestamo(prestamo);
+                        updateLibro(librodevuelto);
+                        updateSocio(socio);
+                    } else {
+                        throw new NprestamosNotValidException();
+                    }
                 }
             }
-
         }else{
             throw new EstadoNotValidException();
         }
+    }
+
+    @Override
+    public List<Prestamo> historicoLibro(String isbn) throws LibroNotFoundException, SQLException, PrestamoNotFoundException
+    {
+        Libro libroPrestamo = getLibroByIsbn(isbn);
+        List<Prestamo> prestamosByIsbn = getPrestamosByIsbn(isbn);
+
+        return null;
     }
 
 
