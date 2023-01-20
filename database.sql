@@ -51,7 +51,7 @@ CREATE TABLE prestamos
     dni VARCHAR(12),
     fecha_prestamo TIMESTAMP,
     fecha_devolucion TIMESTAMP,
-    CONSTRAINT "PK_PRESTAMOS"         PRIMARY KEY (isbn),
+    CONSTRAINT "PK_PRESTAMOS"         PRIMARY KEY (isbn, dni, fecha_prestamo),
     CONSTRAINT "FK_PRESTAMOS_LIBROS"  FOREIGN KEY (isbn) REFERENCES libros(isbn),
     CONSTRAINT "FK_PRESTAMOS_SOCIOS"  FOREIGN KEY (dni) REFERENCES socios(dni),
     --Al especificar el enunciado que son necesarios los datos pedidos, controlamos que al añadir no puedan ser nulos

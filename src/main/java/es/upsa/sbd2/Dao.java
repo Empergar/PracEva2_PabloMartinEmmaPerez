@@ -5,6 +5,7 @@ import es.upsa.sbd2.Exceptions.*;
 import javax.swing.text.html.Option;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface Dao extends AutoCloseable
@@ -19,7 +20,7 @@ public interface Dao extends AutoCloseable
 
     Socio getSocioByDni(String dni) throws SQLException, SocioNotFoundException;
 
-    Prestamo getPrestamoByIsbn(String isbn) throws SQLException, LibroNotFoundException, PrestamoNotFoundException;
+    List<Prestamo> getPrestamosByIsbn(String isbn) throws SQLException, LibroNotFoundException, PrestamoNotFoundException;
 
     //Función que actualiza los parametros de un libro
     public void updateLibro(Libro libro) throws SQLException, LibroNotFoundException, EstadoNotValidException, RequiredTituloException, RequiredEstadoException;
@@ -31,8 +32,8 @@ public interface Dao extends AutoCloseable
 
     void devolverLibro(String isbn) throws SQLException, LibroNotFoundException, SocioNotFoundException, PrestamoNotFoundException, RequiredTituloException, RequiredEstadoException, EstadoNotValidException, NprestamosNotValidException, RequiredDireccionException, RequiredEmailException, RequiredNprestamosException, RequiredNombreException;
 
-    /*
-    historicoLibro();
+    List<Prestamo> historicoLibro(String isbn) throws LibroNotFoundException, SQLException, PrestamoNotFoundException;
+      /*
     historicoSocio();
      */
 
