@@ -183,7 +183,8 @@ public class PostgresDao implements Dao
         List<Prestamo> prestamos = new ArrayList<>();
         final String SQL =  "SELECT p.isbn, p.dni, p.fecha_prestamo, p.fecha_devolucion "
                          +  "   FROM prestamos p "
-                         +  "   WHERE p.isbn = ? ";
+                         +  "   WHERE p.isbn = ? "
+                         + "    ORDER BY p.fecha_prestamo DESC ";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL))
         {
@@ -364,6 +365,8 @@ public class PostgresDao implements Dao
     {
         Libro libroPrestamo = getLibroByIsbn(isbn);
         List<Prestamo> prestamosByIsbn = getPrestamosByIsbn(isbn);
+
+        //QUITAR FOREACH ORDENANDO EN EL GETPRESTAMO Y COMPROBAR SI ES DESC O ASC
 
         return null;
     }
