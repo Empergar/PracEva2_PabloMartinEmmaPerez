@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Data
 @Builder(setterPrefix = "with")
@@ -21,11 +22,16 @@ public class Prestamo
     //Actualizacion de la fecha de devolucion
     public void cambiarFechaDevolucion (){
 
-        fechaDevolucion= LocalDateTime.now();
+        fechaDevolucion= LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     }
 
-    @Override
-    public String toString() {
+    public String toStringHistoricoLibro()
+    {
+        return null;
+    }
+
+    public String toStringHistoricoSocio()
+    {
 
         return "isbn='" + isbn + '\'' +
                 ", fechaPrestamo=" + fechaPrestamo +

@@ -4,6 +4,7 @@ import es.upsa.sbd2.Exceptions.*;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,7 +121,7 @@ public class PostgresDao implements Dao
         {
             preparedStatement.setString(1, isbn);
             preparedStatement.setString(2, dni);
-            preparedStatement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)));
             preparedStatement.setTimestamp(4, null);
 
             //Se ejecuta la sentencia SQL de inserccion
@@ -263,7 +264,7 @@ public class PostgresDao implements Dao
                                 .withIsbn(resultSet.getString(1))
                                 .withDni(resultSet.getString(2))
                                 .withFechaPrestamo(resultSet.getTimestamp(3).toLocalDateTime())
-                                .withFechaDevolucion(fechaDevolucionNullable) //ERROR
+                                .withFechaDevolucion(fechaDevolucionNullable)
                                 .build());
                     } while (resultSet.next());
                     //Se devuelve la lista de prestamos
@@ -401,15 +402,15 @@ public class PostgresDao implements Dao
     {
         //Sentencia SQL
         final String SQL = "UPDATE prestamos "
-                         + "    SET dni = ?, fecha_prestamo = ?, fecha_devolucion = ? "
-                         + "    WHERE isbn = ? ";
+                         + "    SET fecha_devolucion = ? "
+                         + "    WHERE isbn = ? AND dni = ? AND fecha_prestamo = ?  ";
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL))
         {
             //Se establece el parámetro designado en el valor de Java dado.
-            preparedStatement.setString(1, prestamo.getDni());
-            preparedStatement.setTimestamp(2, Timestamp.valueOf(prestamo.getFechaPrestamo()));
-            preparedStatement.setTimestamp(3, Timestamp.valueOf(prestamo.getFechaDevolucion()));
-            preparedStatement.setString(4, prestamo.getIsbn());
+            preparedStatement.setTimestamp(1, Timestamp.valueOf(prestamo.getFechaDevolucion()));
+            preparedStatement.setString(2, prestamo.getIsbn());
+            preparedStatement.setString(3, prestamo.getDni());
+            preparedStatement.setTimestamp(4, Timestamp.valueOf(prestamo.getFechaPrestamo()));
 
             //Se ejecuta la sentencia de SQL
             int count = preparedStatement.executeUpdate();
@@ -520,12 +521,26 @@ public class PostgresDao implements Dao
     //             Historico de libros            //
     //<------------------------------------------->//
     @Override
-    public List<Prestamo> historicoLibro(String isbn) throws LibroNotFoundException, SQLException, PrestamoNotFoundException
+    public List<Prestamo> historicoLibro(String isbn) throws LibroNotFoundException, SQLException, PrestamoNotFoundException, SocioNotFoundException
     {
         Libro libroPrestamo = getLibroByIsbn(isbn);
         List<Prestamo> prestamosByIsbn = getPrestamosByIsbn(isbn);
 
         //QUITAR FOREACH ORDENANDO EN EL GETPRESTAMO Y COMPROBAR SI ES DESC O ASC
+        //Titulos
+        System.out.println("<------------------------------------------->\n       " +
+                "HISTORICO LIBRO ISBN: " + isbn +
+                "\n<------------------------------------------->\n");
+        //Muestro los datos del libro
+        System.out.println(libroPrestamo + "\n");
+
+        //Recorremos la lista de prestamos del libro
+        for (Prestamo prestamo: prestamosByIsbn)
+        {
+            Socio socioPrestamo = getSocioByDni(prestamo.getDni());
+            //Se muestran por pantalla
+            System.out.println("\tPrestamo{Nombre del Socio=" + socioPrestamo.getNombre()+", " + prestamo + "ARREGLAR");
+        }
 
         return prestamosByIsbn;
     }
@@ -540,22 +555,24 @@ public class PostgresDao implements Dao
     public List<Prestamo> historicoSocio(String dni) throws SocioNotFoundException, SQLException, PrestamoNotFoundException, LibroNotFoundException {
 
         //Creamos el socio con sus datos obtenido por medio de su dni
-        Socio socio= getSocioByDni(dni);
+        Socio socioPrestamo = getSocioByDni(dni);
 
         //Creamos la lista de prestamos a traves de una funcion que recoge los prestamos por medio del dni
         List<Prestamo> prestamosByDni = getPrestamosByDni(dni);
 
         //Titulos
-        System.out.println("<------------------------------------------->\n       HISTORICO SOCIO DNI: " + dni+"\n<------------------------------------------->\n");
+        System.out.println("<------------------------------------------->\n       " +
+                "HISTORICO SOCIO DNI: " + dni +
+                "\n<------------------------------------------->\n");
         //Muestro los datos del socio
-        System.out.println(socio+"\n");
+        System.out.println(socioPrestamo +"\n");
 
-        //Recorremos la lista de prestamos
+        //Recorremos la lista de prestamos del socio
         for (Prestamo prestamo: prestamosByDni) {
 
             Libro libro= getLibroByIsbn(prestamo.getIsbn());
             //Se muestran por pantalla
-            System.out.println("\tPrestamo{titulo="+libro.getTitulo()+", "+prestamo.toString());
+            System.out.println("\tPrestamo{titulo="+libro.getTitulo()+", " + prestamo + "ARREGLAR");
         }
         //Se devuelve la lista de prestamos
         return prestamosByDni;

@@ -32,4 +32,13 @@ public class Libro
             default: throw new DataNotValidException();
         }
     }
+
+    @Override
+    public String toString() {
+        return "Libro{" +
+                "isbn='" + isbn + '\'' +
+                ", titulo='" + titulo + '\'' +
+                ", estado=" + estado +
+                '}';
+    }
 }

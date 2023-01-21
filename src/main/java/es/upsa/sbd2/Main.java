@@ -62,6 +62,7 @@ public class Main {
             dao.prestarLibro("45456787P","6666" );
             dao.prestarLibro("34657778O","7777" );
             */
+            //dao.prestarLibro("70944875H","7777" );
             //<------------------------------------------->//
             //             Devolucion de libros            //
             //<------------------------------------------->//
@@ -75,12 +76,13 @@ public class Main {
             //             Historico de libros             //
             //<------------------------------------------->//
 
+            //List<Prestamo> prestamos = dao.historicoLibro("7777");
+
             //<------------------------------------------->//
             //             Historico de socios             //
             //<------------------------------------------->//
 
             List<Prestamo> prestamos = dao.historicoSocio("71062020K");
-
 
             //<------------------------------------------->//
             //                 Excepciones                 //

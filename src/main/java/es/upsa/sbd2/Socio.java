@@ -31,6 +31,17 @@ public class Socio
             nprestamos--;
         }
     }
+
+    @Override
+    public String toString() {
+        return "Socio{" +
+                "dni='" + dni + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", email='" + email + '\'' +
+                ", direccion='" + direccion + '\'' +
+                ", nprestamos=" + nprestamos +
+                '}';
+    }
 }
 
 
