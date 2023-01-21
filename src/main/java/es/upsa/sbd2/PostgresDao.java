@@ -288,7 +288,7 @@ public class PostgresDao implements Dao
         final String SQL =  "SELECT p.isbn, p.dni, p.fecha_prestamo, p.fecha_devolucion "
                          +  "   FROM prestamos p "
                          +  "   WHERE p.dni = ? "
-                         + "    ORDER BY p.fecha_prestamo DESC, p.fecha_devolucion DESC ";
+                         +  "    ORDER BY p.fecha_prestamo DESC, p.fecha_devolucion DESC ";
 
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(SQL))
@@ -524,38 +524,37 @@ public class PostgresDao implements Dao
     public List<Prestamo> historicoLibro(String isbn) throws SQLException, PrestamoNotFoundException, SocioNotFoundException
     {
         Libro libroPrestamo;
+        List<Prestamo> prestamosByIsbn = new ArrayList<>();
 
         //Obtenemos el socio con sus datos obtenido por medio de su dni
         try {
             libroPrestamo = getLibroByIsbn(isbn);
+
+            prestamosByIsbn = getPrestamosByIsbn(isbn);
+
+            //QUITAR FOREACH ORDENANDO EN EL GETPRESTAMO Y COMPROBAR SI ES DESC O ASC
+            //Titulos
+            System.out.println("<------------------------------------------->\n       " +
+                    "HISTORICO LIBRO ISBN: " + isbn +
+                    "\n<------------------------------------------->\n");
+            //Muestro los datos del libro
+            System.out.println(libroPrestamo + "\n");
+
+            //Recorremos la lista de prestamos del libro
+            for (Prestamo prestamo: prestamosByIsbn)
+            {
+                Socio socioPrestamo = getSocioByDni(prestamo.getDni());
+                //Se muestran por pantalla
+                System.out.println("\tPrestamo{Nombre del Socio=" + socioPrestamo.getNombre() + prestamo.toStringHistoricoLibro());
+            }
         } catch (LibroNotFoundException e) {
             //Tratamos la exception si no lo encuentra
             System.out.println("ERROR el libro con isbn " + isbn + " no existe");
-            return null;
         }
 
-        List<Prestamo> prestamosByIsbn = getPrestamosByIsbn(isbn);
-
-        //QUITAR FOREACH ORDENANDO EN EL GETPRESTAMO Y COMPROBAR SI ES DESC O ASC
-        //Titulos
-        System.out.println("<------------------------------------------->\n       " +
-                "HISTORICO LIBRO ISBN: " + isbn +
-                "\n<------------------------------------------->\n");
-        //Muestro los datos del libro
-        System.out.println(libroPrestamo + "\n");
-
-        //Recorremos la lista de prestamos del libro
-        for (Prestamo prestamo: prestamosByIsbn)
-        {
-            Socio socioPrestamo = getSocioByDni(prestamo.getDni());
-            //Se muestran por pantalla
-            System.out.println("\tPrestamo{Nombre del Socio=" + socioPrestamo.getNombre() + prestamo.toStringHistoricoLibro());
-        }
-
+        //Se devuelve la lista de prestamos
         return prestamosByIsbn;
     }
-
-
 
     //<------------------------------------------->//
     //             Historico de socios            //
@@ -565,33 +564,35 @@ public class PostgresDao implements Dao
     public List<Prestamo> historicoSocio(String dni) throws SQLException, PrestamoNotFoundException, LibroNotFoundException
     {
         Socio socioPrestamo;
+        List<Prestamo> prestamosByDni = new ArrayList<>();
 
         //Obtenemos el socio con sus datos obtenido por medio de su dni
         try {
             socioPrestamo = getSocioByDni(dni);
+
+            //Creamos la lista de prestamos a traves de una funcion que recoge los prestamos por medio del dni
+            prestamosByDni = getPrestamosByDni(dni);
+
+            //Titulos
+            System.out.println("<------------------------------------------->\n       " +
+                    "HISTORICO SOCIO DNI: " + dni +
+                    "\n<------------------------------------------->\n");
+            //Muestro los datos del socio
+            System.out.println(socioPrestamo +"\n");
+
+            //Recorremos la lista de prestamos del socio
+            for (Prestamo prestamo: prestamosByDni) {
+
+                Libro libro= getLibroByIsbn(prestamo.getIsbn());
+                //Se muestran por pantalla
+                System.out.println("\tPrestamo{ Titulo="+libro.getTitulo() + prestamo.toStringHistoricoSocio());
+            }
         } catch (SocioNotFoundException e) {
             //Tratamos la exception si no lo encuentra
             System.out.println("ERROR el socio con dni " + dni + " no existe");
             return null;
         }
 
-        //Creamos la lista de prestamos a traves de una funcion que recoge los prestamos por medio del dni
-        List<Prestamo> prestamosByDni = getPrestamosByDni(dni);
-
-        //Titulos
-        System.out.println("<------------------------------------------->\n       " +
-                "HISTORICO SOCIO DNI: " + dni +
-                "\n<------------------------------------------->\n");
-        //Muestro los datos del socio
-        System.out.println(socioPrestamo +"\n");
-
-        //Recorremos la lista de prestamos del socio
-        for (Prestamo prestamo: prestamosByDni) {
-
-            Libro libro= getLibroByIsbn(prestamo.getIsbn());
-            //Se muestran por pantalla
-            System.out.println("\tPrestamo{ Titulo="+libro.getTitulo() + prestamo.toStringHistoricoSocio());
-        }
         //Se devuelve la lista de prestamos
         return prestamosByDni;
     }
