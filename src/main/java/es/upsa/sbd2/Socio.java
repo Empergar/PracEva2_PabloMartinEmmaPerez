@@ -34,13 +34,11 @@ public class Socio
 
     @Override
     public String toString() {
-        return "Socio{" +
-                "dni='" + dni + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", email='" + email + '\'' +
-                ", direccion='" + direccion + '\'' +
-                ", nprestamos=" + nprestamos +
-                '}';
+        return "| Socio=" + dni + " | " +
+                "Nombre=" + nombre + " | " +
+                "Email=" + email + " | " +
+                "Prestamos=" + nprestamos +
+                " | ";
     }
 }
 

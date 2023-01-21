@@ -35,10 +35,9 @@ public class Libro
 
     @Override
     public String toString() {
-        return "Libro{" +
-                "isbn='" + isbn + '\'' +
-                ", titulo='" + titulo + '\'' +
-                ", estado=" + estado +
-                '}';
+        return "| Libro=" + isbn + " | " +
+                "Titulo=" + titulo + " | " +
+                "Estado=" + estado +
+                " |";
     }
 }

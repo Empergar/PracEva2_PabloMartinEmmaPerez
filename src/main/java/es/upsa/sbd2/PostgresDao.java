@@ -539,7 +539,7 @@ public class PostgresDao implements Dao
         {
             Socio socioPrestamo = getSocioByDni(prestamo.getDni());
             //Se muestran por pantalla
-            System.out.println("\tPrestamo{Nombre del Socio=" + socioPrestamo.getNombre()+", " + prestamo + "ARREGLAR");
+            System.out.println("\tPrestamo{Nombre del Socio=" + socioPrestamo.getNombre() + prestamo.toStringHistoricoLibro());
         }
 
         return prestamosByIsbn;
@@ -572,7 +572,7 @@ public class PostgresDao implements Dao
 
             Libro libro= getLibroByIsbn(prestamo.getIsbn());
             //Se muestran por pantalla
-            System.out.println("\tPrestamo{titulo="+libro.getTitulo()+", " + prestamo + "ARREGLAR");
+            System.out.println("\tPrestamo{ Titulo="+libro.getTitulo() + prestamo.toStringHistoricoSocio());
         }
         //Se devuelve la lista de prestamos
         return prestamosByDni;
