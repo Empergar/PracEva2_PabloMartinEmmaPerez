@@ -77,13 +77,13 @@ public class Main {
             //             Historico de libros             //
             //<------------------------------------------->//
 
-            //List<Prestamo> prestamos = dao.historicoLibro("7777");
+            List<Prestamo> prestamos = dao.historicoLibro("7777");
 
             //<------------------------------------------->//
             //             Historico de socios             //
             //<------------------------------------------->//
 
-            List<Prestamo> prestamos = dao.historicoSocio("71062020K");
+            //List<Prestamo> prestamos = dao.historicoSocio("71062020K");
 
             //<------------------------------------------->//
             //                 Excepciones                 //

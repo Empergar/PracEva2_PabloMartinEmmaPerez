@@ -27,18 +27,18 @@ public class Prestamo
 
     public String toStringHistoricoLibro()
     {
-        return " | dni=" + dni +
-                " | fechaPrestamo=" + fechaPrestamo +
-                " | fechaDevolucion=" + ((fechaDevolucion!=null)?fechaDevolucion:"En prestamo") +
+        return " | Dni=" + dni +
+                " | FechaPrestamo=" + fechaPrestamo +
+                " | FechaDevolucion=" + ((fechaDevolucion!=null)?fechaDevolucion:"En prestamo") +
                 '}';
     }
 
     public String toStringHistoricoSocio()
     {
 
-        return " | isbn=" + isbn  +
-                " | fechaPrestamo=" + fechaPrestamo +
-                " | fechaDevolucion=" + ((fechaDevolucion!=null)?fechaDevolucion:"En prestamo") +
+        return " | Isbn=" + isbn  +
+                " | FechaPrestamo=" + fechaPrestamo +
+                " | FechaDevolucion=" + ((fechaDevolucion!=null)?fechaDevolucion:"En prestamo") +
                 '}';
     }
 }
