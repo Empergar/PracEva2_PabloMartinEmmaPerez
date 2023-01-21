@@ -521,9 +521,19 @@ public class PostgresDao implements Dao
     //             Historico de libros            //
     //<------------------------------------------->//
     @Override
-    public List<Prestamo> historicoLibro(String isbn) throws LibroNotFoundException, SQLException, PrestamoNotFoundException, SocioNotFoundException
+    public List<Prestamo> historicoLibro(String isbn) throws SQLException, PrestamoNotFoundException, SocioNotFoundException
     {
-        Libro libroPrestamo = getLibroByIsbn(isbn);
+        Libro libroPrestamo;
+
+        //Obtenemos el socio con sus datos obtenido por medio de su dni
+        try {
+            libroPrestamo = getLibroByIsbn(isbn);
+        } catch (LibroNotFoundException e) {
+            //Tratamos la exception si no lo encuentra
+            System.out.println("ERROR el libro con isbn " + isbn + " no existe");
+            return null;
+        }
+
         List<Prestamo> prestamosByIsbn = getPrestamosByIsbn(isbn);
 
         //QUITAR FOREACH ORDENANDO EN EL GETPRESTAMO Y COMPROBAR SI ES DESC O ASC
@@ -552,10 +562,18 @@ public class PostgresDao implements Dao
     //<------------------------------------------->//
     //A través de esta funcionalidad se devolverá una lista conteniendo los préstamos que ha realizado el socio cuyo CODIGO se pasa como parámetro
     @Override
-    public List<Prestamo> historicoSocio(String dni) throws SocioNotFoundException, SQLException, PrestamoNotFoundException, LibroNotFoundException {
+    public List<Prestamo> historicoSocio(String dni) throws SQLException, PrestamoNotFoundException, LibroNotFoundException
+    {
+        Socio socioPrestamo;
 
-        //Creamos el socio con sus datos obtenido por medio de su dni
-        Socio socioPrestamo = getSocioByDni(dni);
+        //Obtenemos el socio con sus datos obtenido por medio de su dni
+        try {
+            socioPrestamo = getSocioByDni(dni);
+        } catch (SocioNotFoundException e) {
+            //Tratamos la exception si no lo encuentra
+            System.out.println("ERROR el socio con dni " + dni + " no existe");
+            return null;
+        }
 
         //Creamos la lista de prestamos a traves de una funcion que recoge los prestamos por medio del dni
         List<Prestamo> prestamosByDni = getPrestamosByDni(dni);
