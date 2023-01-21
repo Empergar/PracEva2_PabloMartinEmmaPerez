@@ -23,4 +23,15 @@ public class Prestamo
 
         fechaDevolucion= LocalDateTime.now();
     }
+
+    @Override
+    public String toString() {
+
+        return "Prestamo{" +
+                "isbn='" + isbn + '\'' +
+                ", dni='" + dni + '\'' +
+                ", fechaPrestamo=" + fechaPrestamo +
+                ", fechaDevolucion=" + ((fechaDevolucion!=null)?fechaDevolucion:"En prestamo") +
+                '}';
+    }
 }

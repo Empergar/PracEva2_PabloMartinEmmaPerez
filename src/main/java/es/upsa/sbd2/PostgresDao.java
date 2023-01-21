@@ -6,7 +6,6 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class PostgresDao implements Dao
 {
@@ -278,7 +277,55 @@ public class PostgresDao implements Dao
             }
         }
     }
+    @Override
+    public List<Prestamo> getPrestamosByDni(String dni) throws SQLException, PrestamoNotFoundException
+    {
+        //Lista a devolver de los distintos prestamos
+        List<Prestamo> prestamos = new ArrayList<>();
 
+        //Sentencia SQL
+        final String SQL =  "SELECT p.isbn, p.dni, p.fecha_prestamo, p.fecha_devolucion "
+                         +  "   FROM prestamos p "
+                         +  "   WHERE p.dni = ? "
+                         + "    ORDER BY p.fecha_prestamo DESC, p.fecha_devolucion DESC ";
+
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(SQL))
+        {
+            //Se establece el parámetro designado en el valor de Java dado (String).
+            preparedStatement.setString(1, dni);
+
+            //Se ejecuta la sentencia SQL de seleccion
+            try (ResultSet resultSet = preparedStatement.executeQuery() )
+            {
+                //Se va desplazando entre las filas
+                if (resultSet.next())
+                {
+
+                    do {
+                        //Se trata la fecha de devolucion, ya que un resultset  no puede ser nulo y el prestamo puede no estar devuelto
+                        Timestamp fechaDevolucion = resultSet.getTimestamp(4);
+                        LocalDateTime fechaDevolucionNullable = (fechaDevolucion != null) ? fechaDevolucion.toLocalDateTime() : null;
+
+                        //Se añade el prestamo que coincida con lo solictado en la funcion
+                        prestamos.add(Prestamo.builder()
+                                .withIsbn(resultSet.getString(1))
+                                .withDni(resultSet.getString(2))
+                                .withFechaPrestamo(resultSet.getTimestamp(3).toLocalDateTime())
+                                .withFechaDevolucion(fechaDevolucionNullable)
+                                .build());
+                    } while (resultSet.next());
+                    //Se devuelve la lista de prestamos
+                    return prestamos;
+                }
+                else
+                {
+                    //Si no se encuentra ninguno de los prestamos se propaga la siguiente excecpcion
+                    throw  new PrestamoNotFoundException();
+                }
+            }
+        }
+    }
     //<------------------------------------------->//
     //        Actualizacion  de parametros         //
     //<------------------------------------------->//
@@ -483,10 +530,35 @@ public class PostgresDao implements Dao
         return prestamosByIsbn;
     }
 
+
+
     //<------------------------------------------->//
     //             Historico de socios            //
     //<------------------------------------------->//
+    //A través de esta funcionalidad se devolverá una lista conteniendo los préstamos que ha realizado el socio cuyo CODIGO se pasa como parámetro
+    @Override
+    public List<Prestamo> historicoSocio(String dni) throws SocioNotFoundException, SQLException, PrestamoNotFoundException {
 
+        //Creamos el socio con sus datos obtenido por medio de su dni
+        Socio socio= getSocioByDni(dni);
+
+        //Creamos la lista de prestamos a traves de una funcion que recoge los prestamos por medio del dni
+        List<Prestamo> prestamosByDni = getPrestamosByDni(dni);
+
+        //Titulos
+        System.out.println("<------------------------------------------->\n       HISTORICO SOCIO DNI: " + dni+"\n<------------------------------------------->\n");
+        //Muestro los datos del socio
+        System.out.println(socio+"\n");
+
+        //Recorremos la lista de prestamos
+        for (Prestamo prestamo: prestamosByDni) {
+
+            //Se muestran por pantalla
+            System.out.println("\t"+prestamo.toString());
+        }
+        //Se devuelve la lista de prestamos
+        return prestamosByDni;
+    }
     @Override
     public void close() throws Exception
     {

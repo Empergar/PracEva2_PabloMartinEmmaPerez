@@ -1,5 +1,8 @@
 package es.upsa.sbd2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //<----------------------------------->//
 //    -*-Pablo Martin Sanchez-*-       //
 //     -*-Emma Perez Garcia-*-         //
@@ -76,13 +79,20 @@ public class Main {
             //             Historico de socios             //
             //<------------------------------------------->//
 
+            List<Prestamo> prestamos = dao.historicoSocio("71062020K");
+
+
             //<------------------------------------------->//
             //                 Excepciones                 //
             //<------------------------------------------->//
             /*
             Socio socio10= dao.insertSocio("70944875H", "Pablo", "Plaza Mayor", "pmartinsa.inf@upsa.es"); //Insercion de un socio duplicado
             dao.prestarLibro("70944875H","2222" ); //Prestar un libro ya prestado
+            dao.prestarLibro("99999999K","8888" ); //Prestar un libro a un socio que no existe
+            dao.prestarLibro("70944875H","1112" ); //Prestar un libro que no existe
             dao.devolverLibro("3333"); //Devolucion de un libro devuelto
+            dao.devolverLibro("1112"); //Devolucion de un libro que no existe
+            List<Prestamo> prestamos2 = dao.historicoSocio("23445890R"); //El socio no ha cogido ningun libro de la biblioteca
             */
         }
     }

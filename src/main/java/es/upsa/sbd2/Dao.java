@@ -28,6 +28,9 @@ public interface Dao extends AutoCloseable
     //Obtener la lista de prestamos de un libro a traves de su isbn
     List<Prestamo> getPrestamosByIsbn(String isbn) throws SQLException, LibroNotFoundException, PrestamoNotFoundException;
 
+    //Obtener la lista de prestamos de un libro a traves del dni del socio
+    List<Prestamo> getPrestamosByDni(String dni) throws SQLException, PrestamoNotFoundException;
+
     //Función que actualiza los parametros de un libro
     public void updateLibro(Libro libro) throws SQLException, LibroNotFoundException, EstadoNotValidException, RequiredTituloException, RequiredEstadoException;
 
@@ -44,8 +47,6 @@ public interface Dao extends AutoCloseable
     List<Prestamo> historicoLibro(String isbn) throws LibroNotFoundException, SQLException, PrestamoNotFoundException;
 
     //Historio de prestamos de un socio concreto
-      /*
-    historicoSocio();
-     */
+     List<Prestamo> historicoSocio(String dni) throws SocioNotFoundException, SQLException, PrestamoNotFoundException;
 
 }
