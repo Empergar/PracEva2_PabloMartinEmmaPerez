@@ -17,12 +17,14 @@ public class Socio
     private String direccion;
     private int nprestamos;
 
+    //Incremento del numero de prestamos
     public void incrementarNprestamos()
     {
         if (nprestamos >= 0) {
             nprestamos++;
         }
     }
+    //Decremento del numero de prestamos
     public void decrementarNprestamos()
     {
         if (nprestamos > 0) {
