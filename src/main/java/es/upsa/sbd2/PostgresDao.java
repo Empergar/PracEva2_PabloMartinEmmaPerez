@@ -331,28 +331,27 @@ public class PostgresDao implements Dao
     public void devolverLibro(String isbn) throws SQLException, LibroNotFoundException, SocioNotFoundException, PrestamoNotFoundException, RequiredTituloException, RequiredEstadoException, EstadoNotValidException, NprestamosNotValidException, RequiredDireccionException, RequiredEmailException, RequiredNprestamosException, RequiredNombreException {
 
         Libro librodevuelto = getLibroByIsbn(isbn);
-        List<Prestamo> prestamosByIsbn = getPrestamosByIsbn(isbn);
+        //Obtenemos el primer miembto de la lista ya que al estar ordenada de manera descendente la fecha de prestamo
+        //el primer prestamo de la lista será el que se encuentre activo, en caso de que alguno lo este
+        Prestamo prestamoByIsbn = getPrestamosByIsbn(isbn).get(0);
 
         //Compruebo que el libro no se haya devuelto y por lo tanto haya un prestamo que se pueda devolver
         if (librodevuelto.getEstado().equals(Estado.OCUPADO)) {
-            for (Prestamo prestamo : prestamosByIsbn) {
-                //Para hacer pruebas
-                if (prestamo.getFechaDevolucion() == null) {
+            if (prestamoByIsbn.getFechaDevolucion() == null) {
 
-                    prestamo.cambiarFechaDevolucion();
-                    librodevuelto.cambiarEstado();
+                prestamoByIsbn.cambiarFechaDevolucion();
+                librodevuelto.cambiarEstado();
 
-                    Socio socio = getSocioByDni(prestamo.getDni());
-                    if (socio.getNprestamos() > 0) {
+                Socio socio = getSocioByDni(prestamoByIsbn.getDni());
+                if (socio.getNprestamos() > 0) {
 
-                        socio.decrementarNprestamos();
+                    socio.decrementarNprestamos();
 
-                        updatePrestamo(prestamo);
-                        updateLibro(librodevuelto);
-                        updateSocio(socio);
-                    } else {
-                        throw new NprestamosNotValidException();
-                    }
+                    updatePrestamo(prestamoByIsbn);
+                    updateLibro(librodevuelto);
+                    updateSocio(socio);
+                } else {
+                    throw new NprestamosNotValidException();
                 }
             }
         }else{
@@ -368,7 +367,7 @@ public class PostgresDao implements Dao
 
         //QUITAR FOREACH ORDENANDO EN EL GETPRESTAMO Y COMPROBAR SI ES DESC O ASC
 
-        return null;
+        return prestamosByIsbn;
     }
 
 
