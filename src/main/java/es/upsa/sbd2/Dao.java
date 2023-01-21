@@ -47,6 +47,6 @@ public interface Dao extends AutoCloseable
     List<Prestamo> historicoLibro(String isbn) throws LibroNotFoundException, SQLException, PrestamoNotFoundException;
 
     //Historio de prestamos de un socio concreto
-     List<Prestamo> historicoSocio(String dni) throws SocioNotFoundException, SQLException, PrestamoNotFoundException;
+     List<Prestamo> historicoSocio(String dni) throws SocioNotFoundException, SQLException, PrestamoNotFoundException, LibroNotFoundException;
 
 }

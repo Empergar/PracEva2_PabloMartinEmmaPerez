@@ -537,7 +537,7 @@ public class PostgresDao implements Dao
     //<------------------------------------------->//
     //A través de esta funcionalidad se devolverá una lista conteniendo los préstamos que ha realizado el socio cuyo CODIGO se pasa como parámetro
     @Override
-    public List<Prestamo> historicoSocio(String dni) throws SocioNotFoundException, SQLException, PrestamoNotFoundException {
+    public List<Prestamo> historicoSocio(String dni) throws SocioNotFoundException, SQLException, PrestamoNotFoundException, LibroNotFoundException {
 
         //Creamos el socio con sus datos obtenido por medio de su dni
         Socio socio= getSocioByDni(dni);
@@ -553,8 +553,9 @@ public class PostgresDao implements Dao
         //Recorremos la lista de prestamos
         for (Prestamo prestamo: prestamosByDni) {
 
+            Libro libro= getLibroByIsbn(prestamo.getIsbn());
             //Se muestran por pantalla
-            System.out.println("\t"+prestamo.toString());
+            System.out.println("\tPrestamo{titulo="+libro.getTitulo()+", "+prestamo.toString());
         }
         //Se devuelve la lista de prestamos
         return prestamosByDni;

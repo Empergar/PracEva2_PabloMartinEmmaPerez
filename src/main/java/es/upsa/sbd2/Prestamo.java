@@ -27,9 +27,7 @@ public class Prestamo
     @Override
     public String toString() {
 
-        return "Prestamo{" +
-                "isbn='" + isbn + '\'' +
-                ", dni='" + dni + '\'' +
+        return "isbn='" + isbn + '\'' +
                 ", fechaPrestamo=" + fechaPrestamo +
                 ", fechaDevolucion=" + ((fechaDevolucion!=null)?fechaDevolucion:"En prestamo") +
                 '}';
