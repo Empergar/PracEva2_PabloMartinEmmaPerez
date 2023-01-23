@@ -1,7 +1,16 @@
+-- -------------------------- --
+--       BORRAR TABLAS        --
+-- -------------------------- --
 DROP TABLE prestamos;
 DROP TABLE libros;
 DROP TABLE socios;
 
+
+-- --------------------------- --
+--           LIBROS            --
+-- --------------------------- --
+
+--Creacion de la tabla libros
 CREATE TABLE libros
 (
     isbn VARCHAR(12),
@@ -15,8 +24,14 @@ CREATE TABLE libros
     CONSTRAINT "NN_LIBROS_ESTADO"   CHECK ( estado IS NOT NULL)
 );
 
+--Inserccion de un libro en la tabla
 INSERT INTO libros(isbn, titulo, estado) values ('1111', 'El Quijote', 'LIBRE');
 
+-- --------------------------- --
+--           SOCIOS            --
+-- --------------------------- --
+
+--Creacion de la tabla socios
 CREATE TABLE socios
 (
     dni VARCHAR(12),
@@ -35,16 +50,23 @@ CREATE TABLE socios
 
 );
 
+--Insercción de un socio
 INSERT INTO socios(dni, nombre, email, direccion, nprestamos) values ('70944875H', 'Pablo', 'pmartinsa.inf@upsa.es', 'Plaza Mayor', 5);
 
+--Actualizacion de un socio
 UPDATE socios
     SET  nprestamos = 5, nombre = ''
     WHERE dni = '70944875H';
 
-
+--Eliminacion de un socio
 DELETE FROM socios
 WHERE dni = '70944875H';
 
+-- --------------------------- --
+--          PRESTAMOS          --
+-- --------------------------- --
+
+--Creacion de la tabla prestamos
 CREATE TABLE prestamos
 (
     isbn VARCHAR(12),
