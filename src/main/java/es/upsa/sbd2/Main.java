@@ -1,6 +1,8 @@
 package es.upsa.sbd2;
 
+import es.upsa.sbd2.Clases.Libro;
 import es.upsa.sbd2.Clases.Prestamo;
+import es.upsa.sbd2.Clases.Socio;
 
 import java.util.List;
 
