@@ -23,7 +23,7 @@ CREATE TABLE socios
     nombre VARCHAR(100),
     email VARCHAR(100),
     direccion VARCHAR(100),
-    nprestamos INTEGER,
+    nprestamos NUMERIC(1),
 
     CONSTRAINT "PK_SOCIOS"      PRIMARY KEY (dni),
     CONSTRAINT "CH_NPRESTAMOS"  CHECK ( nprestamos <= 5 ),

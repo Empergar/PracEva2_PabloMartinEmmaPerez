@@ -1,12 +1,12 @@
 package es.upsa.sbd2;
 
+import es.upsa.sbd2.Clases.Libro;
+import es.upsa.sbd2.Clases.Prestamo;
+import es.upsa.sbd2.Clases.Socio;
 import es.upsa.sbd2.Exceptions.*;
 
-import javax.swing.text.html.Option;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface Dao extends AutoCloseable
 {

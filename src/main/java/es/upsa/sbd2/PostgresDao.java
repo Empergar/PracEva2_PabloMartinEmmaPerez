@@ -1,5 +1,9 @@
 package es.upsa.sbd2;
 
+import es.upsa.sbd2.Clases.Libro;
+import es.upsa.sbd2.Clases.Prestamo;
+import es.upsa.sbd2.Clases.Socio;
+import es.upsa.sbd2.Enumeraciones.Estado;
 import es.upsa.sbd2.Exceptions.*;
 
 import java.sql.*;
@@ -12,7 +16,7 @@ public class PostgresDao implements Dao
 {
     private Connection connection;
 
-    //COMENTAR ESTO BIEN
+    //Constructor de la clase establece conexión con la base de datos
     public PostgresDao(String url, String username, String password) throws SQLException
     {
         Driver driver = new org.postgresql.Driver();

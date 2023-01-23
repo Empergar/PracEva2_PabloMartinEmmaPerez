@@ -1,4 +1,4 @@
-package es.upsa.sbd2;
+package es.upsa.sbd2.Enumeraciones;
 
 import es.upsa.sbd2.Exceptions.DataNotValidException;
 

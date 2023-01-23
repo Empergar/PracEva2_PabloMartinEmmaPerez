@@ -1,6 +1,7 @@
 package es.upsa.sbd2;
 
-import java.util.ArrayList;
+import es.upsa.sbd2.Clases.Prestamo;
+
 import java.util.List;
 
 //<----------------------------------->//

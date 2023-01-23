@@ -1,4 +1,4 @@
-package es.upsa.sbd2;
+package es.upsa.sbd2.Clases;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

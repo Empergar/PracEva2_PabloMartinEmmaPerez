@@ -1,5 +1,6 @@
-package es.upsa.sbd2;
+package es.upsa.sbd2.Clases;
 
+import es.upsa.sbd2.Enumeraciones.Estado;
 import es.upsa.sbd2.Exceptions.DataNotValidException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
