@@ -1,6 +1,8 @@
 package es.upsa.sbd2;
 
+import es.upsa.sbd2.Clases.Libro;
 import es.upsa.sbd2.Clases.Prestamo;
+import es.upsa.sbd2.Clases.Socio;
 
 import java.util.List;
 
@@ -19,7 +21,7 @@ public class Main {
             //<------------------------------------------->//
             //             Inserccion de libros            //
             //<------------------------------------------->//
-            /*
+            ///*
             Libro libro1 = dao.insertLibro("1111", "El Quijote");
             Libro libro2 = dao.insertLibro("2222", "La Celestina");
             Libro libro3 = dao.insertLibro("3333", "El Mago de Oz");
@@ -29,11 +31,11 @@ public class Main {
             Libro libro7 = dao.insertLibro("7777", "Moby Dick");
             Libro libro8 = dao.insertLibro("8888", "Dune");
             Libro libro9 = dao.insertLibro("9999", "La Montaña Magica");
-            */
+            //*/
             //<------------------------------------------->//
             //             Inserccion de socios            //
             //<------------------------------------------->//
-            /*
+            ///*
             Socio socio1= dao.insertSocio("70944875H", "Pablo", "Plaza Mayor", "pmartinsa.inf@upsa.es");
             Socio socio2= dao.insertSocio("71062020K", "Emma", "c/Amapola, 12", "eperezga.inf@upsa.es");
             Socio socio3= dao.insertSocio("45456787P", "Carmen", "c/tulipan", "maria@gmail.com");
@@ -43,7 +45,7 @@ public class Main {
             Socio socio7= dao.insertSocio("34576878H", "Fernando", "c/tulipan", "maria@gmail.com");
             Socio socio8= dao.insertSocio("23445890R", "Jose", "c/tulipan", "maria@gmail.com");
             Socio socio9= dao.insertSocio("98347574S", "Luisa", "c/tulipan", "maria@gmail.com");
-            */
+            //*/
             //<------------------------------------------->//
             //                      BORRAR                 //
             //<------------------------------------------->//
